@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: agentic-flow-config
+  namespace: agentic-flow
+data:
+  NODE_ENV: "production"
+  PORT: "3000"
+  API_VERSION: "v1"
+  API_PREFIX: "/api"
+  LOG_LEVEL: "info"
+  LOG_FORMAT: "json"
+  ENABLE_METRICS: "true"
+  PROMETHEUS_PORT: "9090"
+  ENABLE_TRACING: "true"
+  CORS_CREDENTIALS: "true"
+  CLUSTER_MODE: "true"
+  WORKER_THREADS: "4"
+  MAX_MEMORY_MB: "1024"

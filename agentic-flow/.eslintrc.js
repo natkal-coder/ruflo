@@ -1,0 +1,95 @@
+module.exports = {
+  root: true,
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    ecmaVersion: 2022,
+    sourceType: 'module',
+    project: ['./tsconfig.json'],
+    tsconfigRootDir: __dirname,
+  },
+  env: {
+    node: true,
+    es2022: true,
+    jest: true,
+  },
+  plugins: [
+    '@typescript-eslint',
+    'jest',
+    'security',
+  ],
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/recommended-requiring-type-checking',
+    'plugin:jest/recommended',
+    'plugin:security/recommended',
+    'prettier',
+  ],
+  rules: {
+    // TypeScript rules
+    '@typescript-eslint/explicit-module-boundary-types': 'error',
+    '@typescript-eslint/no-explicit-any': 'error',
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    '@typescript-eslint/no-non-null-assertion': 'error',
+    '@typescript-eslint/strict-boolean-expressions': 'error',
+    '@typescript-eslint/no-floating-promises': 'error',
+    '@typescript-eslint/no-misused-promises': 'error',
+    '@typescript-eslint/await-thenable': 'error',
+    '@typescript-eslint/no-unnecessary-type-assertion': 'error',
+    '@typescript-eslint/prefer-nullish-coalescing': 'error',
+    '@typescript-eslint/prefer-optional-chain': 'error',
+    '@typescript-eslint/prefer-string-starts-ends-with': 'error',
+    '@typescript-eslint/prefer-includes': 'error',
+    '@typescript-eslint/no-unsafe-assignment': 'error',
+    '@typescript-eslint/no-unsafe-member-access': 'error',
+    '@typescript-eslint/no-unsafe-call': 'error',
+    '@typescript-eslint/no-unsafe-return': 'error',
+    
+    // General rules
+    'no-console': ['error', { allow: ['warn', 'error'] }],
+    'no-debugger': 'error',
+    'no-alert': 'error',
+    'prefer-const': 'error',
+    'no-var': 'error',
+    'eqeqeq': ['error', 'always'],
+    'curly': ['error', 'all'],
+    'no-throw-literal': 'error',
+    'no-return-await': 'error',
+    'require-await': 'error',
+    'no-async-promise-executor': 'error',
+    'no-promise-executor-return': 'error',
+    
+    // Security rules
+    'security/detect-object-injection': 'warn',
+    'security/detect-non-literal-fs-filename': 'warn',
+    
+    // Jest rules
+    'jest/no-disabled-tests': 'error',
+    'jest/no-focused-tests': 'error',
+    'jest/no-identical-title': 'error',
+    'jest/valid-expect': 'error',
+    'jest/expect-expect': 'error',
+    'jest/no-test-prefixes': 'error',
+    'jest/no-done-callback': 'error',
+  },
+  overrides: [
+    {
+      files: ['*.test.ts', '*.spec.ts'],
+      rules: {
+        '@typescript-eslint/no-explicit-any': 'off',
+        '@typescript-eslint/no-unsafe-assignment': 'off',
+        '@typescript-eslint/no-unsafe-member-access': 'off',
+        '@typescript-eslint/no-unsafe-call': 'off',
+        '@typescript-eslint/no-unsafe-return': 'off',
+      },
+    },
+  ],
+  ignorePatterns: [
+    'dist',
+    'node_modules',
+    'coverage',
+    '*.js',
+    '!.eslintrc.js',
+    '!jest.*.js',
+  ],
+};

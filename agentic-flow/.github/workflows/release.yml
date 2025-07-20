@@ -1,0 +1,168 @@
+name: Release Management
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: 'Release type'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - prerelease
+      prerelease_id:
+        description: 'Prerelease identifier (alpha, beta, rc)'
+        required: false
+        default: 'alpha'
+
+permissions:
+  contents: write
+  packages: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  prepare-release:
+    name: Prepare Release
+    runs-on: ubuntu-latest
+    outputs:
+      new_version: ${{ steps.version.outputs.new_version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          registry-url: 'https://registry.npmjs.org'
+      
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      
+      - name: Install dependencies
+        run: |
+          cd agentic-flow
+          npm ci
+      
+      - name: Bump version
+        id: version
+        run: |
+          cd agentic-flow
+          if [ "${{ github.event.inputs.release_type }}" = "prerelease" ]; then
+            npm version prerelease --preid=${{ github.event.inputs.prerelease_id }}
+          else
+            npm version ${{ github.event.inputs.release_type }}
+          fi
+          echo "new_version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+      
+      - name: Generate changelog
+        run: |
+          cd agentic-flow
+          npm run changelog
+      
+      - name: Commit version bump
+        run: |
+          git add .
+          git commit -m "chore: release v${{ steps.version.outputs.new_version }}"
+          git push
+
+  create-release:
+    name: Create GitHub Release
+    needs: prepare-release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ needs.prepare-release.outputs.new_version }}
+          name: Release v${{ needs.prepare-release.outputs.new_version }}
+          draft: false
+          prerelease: ${{ github.event.inputs.release_type == 'prerelease' }}
+          generate_release_notes: true
+
+  publish-npm:
+    name: Publish to NPM
+    needs: [prepare-release, create-release]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          registry-url: 'https://registry.npmjs.org'
+      
+      - name: Install dependencies
+        run: |
+          cd agentic-flow
+          npm ci
+      
+      - name: Build package
+        run: |
+          cd agentic-flow
+          npm run build
+      
+      - name: Publish to NPM
+        run: |
+          cd agentic-flow
+          if [ "${{ github.event.inputs.release_type }}" = "prerelease" ]; then
+            npm publish --tag ${{ github.event.inputs.prerelease_id }}
+          else
+            npm publish
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  update-documentation:
+    name: Update Documentation
+    needs: create-release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+      
+      - name: Install dependencies
+        run: |
+          cd agentic-flow
+          npm ci
+      
+      - name: Generate API documentation
+        run: |
+          cd agentic-flow
+          npm run docs
+      
+      - name: Deploy documentation
+        run: |
+          echo "Deploy documentation to GitHub Pages or documentation site"
+          # Add actual deployment commands
+
+  notify-release:
+    name: Notify Release
+    needs: [create-release, publish-npm]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Slack notification
+        run: |
+          echo "Send notification to Slack/Discord/Email"
+          # Add actual notification commands

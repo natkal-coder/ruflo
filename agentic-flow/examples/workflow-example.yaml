@@ -1,0 +1,68 @@
+name: "Data Analysis Pipeline"
+description: "Complete data analysis workflow with multiple agents"
+trigger:
+  type: schedule
+  schedule: "0 9 * * 1"  # Every Monday at 9 AM
+
+steps:
+  - id: data-collection
+    name: "Collect Data Sources"
+    type: agent-task
+    agentId: "researcher-01"
+    task: "Gather data from multiple sources including APIs, databases, and files"
+    
+  - id: data-validation
+    name: "Validate Data Quality"
+    type: agent-task
+    agentId: "analyst-01"
+    task: "Check data integrity, handle missing values, and validate formats"
+    
+  - id: parallel-analysis
+    name: "Parallel Analysis Tasks"
+    type: parallel
+    steps:
+      - id: statistical-analysis
+        name: "Statistical Analysis"
+        type: agent-task
+        agentId: "analyst-01"
+        task: "Perform statistical analysis and generate insights"
+        
+      - id: visualization
+        name: "Create Visualizations"
+        type: agent-task
+        agentId: "developer-01"
+        task: "Generate charts, graphs, and interactive visualizations"
+        
+      - id: ml-modeling
+        name: "Machine Learning Models"
+        type: agent-task
+        agentId: "analyst-02"
+        task: "Build and train predictive models"
+        
+  - id: quality-check
+    name: "Quality Assurance"
+    type: conditional
+    condition: "params.requiresQA"
+    steps:
+      - id: test-results
+        name: "Test Analysis Results"
+        type: agent-task
+        agentId: "tester-01"
+        task: "Validate analysis results and check for anomalies"
+        
+  - id: report-generation
+    name: "Generate Final Report"
+    type: agent-task
+    agentId: "documenter-01"
+    task: "Create comprehensive analysis report with findings and recommendations"
+    
+  - id: api-notification
+    name: "Send Notification"
+    type: http
+    url: "https://api.example.com/notifications"
+    method: "POST"
+    
+  - id: cleanup
+    name: "Clean Up Resources"
+    type: script
+    script: "cleanup-analysis-artifacts.sh"

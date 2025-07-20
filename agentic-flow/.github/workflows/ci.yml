@@ -1,0 +1,255 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop, 'release/*']
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20.x'
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}/agentic-flow
+
+permissions:
+  contents: read
+  packages: write
+  security-events: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  lint-and-typecheck:
+    name: Lint and Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: agentic-flow/package-lock.json
+      
+      - name: Install dependencies
+        run: |
+          cd agentic-flow
+          npm ci
+      
+      - name: Run linting
+        run: |
+          cd agentic-flow
+          npm run lint
+      
+      - name: Run type checking
+        run: |
+          cd agentic-flow
+          npm run typecheck
+      
+      - name: Check code formatting
+        run: |
+          cd agentic-flow
+          npm run format:check
+
+  test:
+    name: Test Suite
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['20.x', '21.x']
+        test-suite: ['unit', 'integration', 'e2e']
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: agentic-flow/package-lock.json
+      
+      - name: Install dependencies
+        run: |
+          cd agentic-flow
+          npm ci
+      
+      - name: Run ${{ matrix.test-suite }} tests
+        run: |
+          cd agentic-flow
+          npm run test:${{ matrix.test-suite }}
+      
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./agentic-flow/coverage/lcov.info
+          flags: ${{ matrix.test-suite }}
+          name: coverage-${{ matrix.node-version }}-${{ matrix.test-suite }}
+
+  security-scan:
+    name: Security Scanning
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: agentic-flow/package-lock.json
+      
+      - name: Install dependencies
+        run: |
+          cd agentic-flow
+          npm ci
+      
+      - name: Run npm audit
+        run: |
+          cd agentic-flow
+          npm audit --audit-level=moderate
+        continue-on-error: true
+      
+      - name: Run Snyk security scan
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high --file=agentic-flow/package.json
+        continue-on-error: true
+      
+      - name: Run CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+        with:
+          languages: javascript
+
+  build:
+    name: Build Application
+    needs: [lint-and-typecheck, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: agentic-flow/package-lock.json
+      
+      - name: Install dependencies
+        run: |
+          cd agentic-flow
+          npm ci
+      
+      - name: Build application
+        run: |
+          cd agentic-flow
+          npm run build
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: agentic-flow/dist/
+          retention-days: 7
+
+  docker-build:
+    name: Build Docker Image
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha
+      
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./agentic-flow
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64,linux/arm64
+
+  release:
+    name: Create Release
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: [docker-build, security-scan]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: agentic-flow/package-lock.json
+      
+      - name: Install dependencies
+        run: |
+          cd agentic-flow
+          npm ci
+      
+      - name: Run semantic release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          cd agentic-flow
+          npm run release
+
+  deploy-staging:
+    name: Deploy to Staging
+    if: github.ref == 'refs/heads/develop'
+    needs: [docker-build]
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Deploy to Kubernetes (Staging)
+        run: |
+          echo "Deploying to staging environment..."
+          # Add actual deployment commands here
+
+  deploy-production:
+    name: Deploy to Production
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: [release]
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Deploy to Kubernetes (Production)
+        run: |
+          echo "Deploying to production environment..."
+          # Add actual deployment commands here

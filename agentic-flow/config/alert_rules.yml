@@ -1,0 +1,56 @@
+groups:
+  - name: agentic-flow.rules
+    rules:
+      - alert: HighErrorRate
+        expr: rate(agentic_flow_errors_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value }} errors per second"
+
+      - alert: HighMemoryUsage
+        expr: (agentic_flow_memory_usage_bytes{type="heapUsed"} / agentic_flow_memory_usage_bytes{type="heapTotal"}) > 0.9
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is {{ $value | humanizePercentage }}"
+
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, rate(agentic_flow_http_request_duration_seconds_bucket[5m])) > 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High response time detected"
+          description: "95th percentile response time is {{ $value }}s"
+
+      - alert: ServiceDown
+        expr: up{job="agentic-flow"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Agentic Flow service is down"
+          description: "The Agentic Flow service has been down for more than 1 minute"
+
+      - alert: HighQueueSize
+        expr: agentic_flow_queue_size > 1000
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High queue size detected"
+          description: "Queue {{ $labels.queue_name }} has {{ $value }} items"
+
+      - alert: WorkflowFailureRate
+        expr: rate(agentic_flow_workflow_executions_total{status="failed"}[5m]) / rate(agentic_flow_workflow_executions_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High workflow failure rate"
+          description: "Workflow failure rate is {{ $value | humanizePercentage }}"

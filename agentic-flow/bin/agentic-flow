@@ -1,0 +1,36 @@
+#!/usr/bin/env node
+
+// Enable ES module support for dynamic imports
+require = require('esm')(module);
+
+// Handle uncaught errors gracefully
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error.message);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  process.exit(1);
+});
+
+// Check Node.js version
+const nodeVersion = process.versions.node;
+const majorVersion = parseInt(nodeVersion.split('.')[0]);
+
+if (majorVersion < 16) {
+  console.error(`Error: Node.js version ${nodeVersion} is not supported.`);
+  console.error('Please upgrade to Node.js 16.0.0 or higher.');
+  process.exit(1);
+}
+
+// Load and run the CLI
+try {
+  require('../dist/cli/index.js');
+} catch (error) {
+  if (error.code === 'MODULE_NOT_FOUND' && error.message.includes('dist')) {
+    console.error('Error: Application not built. Please run "npm run build" first.');
+    process.exit(1);
+  }
+  throw error;
+}
