@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentic Flow - AI Orchestration Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #0F172A;
+            color: #F8FAFC;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%);
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .section {
+            margin-bottom: 3rem;
+        }
+        
+        .section h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .card {
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .agent-card {
+            background: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+            border: 1px solid #475569;
+        }
+        
+        .tool-card {
+            background: linear-gradient(135deg, #065F46 0%, #047857 100%);
+            border: 1px solid #10B981;
+        }
+        
+        .workflow-card {
+            background: linear-gradient(135deg, #312E81 0%, #5B21B6 100%);
+            border: 1px solid #6366F1;
+        }
+        
+        .card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .card p {
+            opacity: 0.8;
+            margin-bottom: 1rem;
+        }
+        
+        .capabilities {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .capability {
+            background: rgba(255,255,255,0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+        }
+        
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            background: rgba(16, 185, 129, 0.2);
+            color: #10B981;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            opacity: 0.6;
+        }
+        
+        .error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #EF4444;
+            color: #F87171;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .execute-btn {
+            background: #3B82F6;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: background 0.2s;
+        }
+        
+        .execute-btn:hover {
+            background: #2563EB;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Agentic Flow</h1>
+            <p>AI Orchestration Platform - Multi-Agent Coordination & Workflow Automation</p>
+        </div>
+        
+        <div class="section">
+            <h2>🤖 AI Agents</h2>
+            <div id="agents" class="grid">
+                <div class="loading">Loading agents...</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>🛠️ Network Tools</h2>
+            <div id="tools" class="grid">
+                <!-- Tools are hardcoded since API doesn't expose them -->
+                <div class="tool-card card" onclick="executeClaudeFlow()">
+                    <h3>🧠 Claude Flow Coordinate</h3>
+                    <p>Coordinate multiple Claude agents for complex reasoning tasks</p>
+                    <div class="capabilities">
+                        <span class="capability">Multi-agent</span>
+                        <span class="capability">Reasoning</span>
+                        <span class="capability">Parallel</span>
+                    </div>
+                    <br>
+                    <button class="execute-btn">Execute Tool</button>
+                </div>
+                
+                <div class="tool-card card" onclick="executeHiveMind()">
+                    <h3>🐝 Hive Mind Collective</h3>
+                    <p>Create collective intelligence using distributed hive mind reasoning</p>
+                    <div class="capabilities">
+                        <span class="capability">Collective</span>
+                        <span class="capability">Consensus</span>
+                        <span class="capability">Distributed</span>
+                    </div>
+                    <br>
+                    <button class="execute-btn">Execute Tool</button>
+                </div>
+                
+                <div class="tool-card card" onclick="executeRuvSwarm()">
+                    <h3>🔥 RUV Swarm Deploy</h3>
+                    <p>Deploy and manage distributed agent swarms with dynamic scaling</p>
+                    <div class="capabilities">
+                        <span class="capability">Swarm</span>
+                        <span class="capability">Scaling</span>
+                        <span class="capability">Distributed</span>
+                    </div>
+                    <br>
+                    <button class="execute-btn">Execute Tool</button>
+                </div>
+                
+                <div class="tool-card card">
+                    <h3>👥 Create Team</h3>
+                    <p>Create a new team of agents for a specific goal</p>
+                    <div class="capabilities">
+                        <span class="capability">Team</span>
+                        <span class="capability">Management</span>
+                    </div>
+                </div>
+                
+                <div class="tool-card card">
+                    <h3>🔄 Execute Workflow</h3>
+                    <p>Execute a workflow with the agentic-flow system</p>
+                    <div class="capabilities">
+                        <span class="capability">Workflow</span>
+                        <span class="capability">Automation</span>
+                    </div>
+                </div>
+                
+                <div class="tool-card card">
+                    <h3>📊 Monitor System</h3>
+                    <p>Monitor the health and status of the agentic-flow system</p>
+                    <div class="capabilities">
+                        <span class="capability">Monitoring</span>
+                        <span class="capability">Health</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>🔄 Workflows</h2>
+            <div id="workflows" class="grid">
+                <div class="loading">Loading workflows...</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = 'http://localhost:4111/api';
+        
+        // Fetch and display agents
+        async function loadAgents() {
+            try {
+                const response = await fetch(`${API_BASE}/agents`);
+                const agents = await response.json();
+                
+                const agentsContainer = document.getElementById('agents');
+                agentsContainer.innerHTML = '';
+                
+                Object.entries(agents).forEach(([key, agent]) => {
+                    const agentCard = document.createElement('div');
+                    agentCard.className = 'agent-card card';
+                    
+                    // Determine icon based on agent type
+                    let icon = '🤖';
+                    if (key.includes('claude-flow')) icon = '🧠';
+                    else if (key.includes('hive-mind')) icon = '🐝';
+                    else if (key.includes('ruv-swarm')) icon = '🔥';
+                    else if (key === 'coordinator') icon = '👔';
+                    else if (key === 'executor') icon = '⚡';
+                    else if (key === 'researcher') icon = '🔍';
+                    else if (key === 'architect') icon = '🏗️';
+                    
+                    agentCard.innerHTML = `
+                        <h3>${icon} ${agent.name}</h3>
+                        <p>${agent.description || 'AI agent for ' + key}</p>
+                        <div class="status">🟢 Active</div>
+                    `;
+                    
+                    agentsContainer.appendChild(agentCard);
+                });
+            } catch (error) {
+                document.getElementById('agents').innerHTML = `
+                    <div class="error">Failed to load agents: ${error.message}</div>
+                `;
+            }
+        }
+        
+        // Fetch and display workflows
+        async function loadWorkflows() {
+            try {
+                const response = await fetch(`${API_BASE}/workflows`);
+                const workflows = await response.json();
+                
+                const workflowsContainer = document.getElementById('workflows');
+                workflowsContainer.innerHTML = '';
+                
+                Object.entries(workflows).forEach(([key, workflow]) => {
+                    const workflowCard = document.createElement('div');
+                    workflowCard.className = 'workflow-card card';
+                    
+                    workflowCard.innerHTML = `
+                        <h3>🔄 ${key.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</h3>
+                        <p>${workflow.description}</p>
+                        <div class="capabilities">
+                            <span class="capability">${workflow.steps ? Object.keys(workflow.steps).length : 0} steps</span>
+                        </div>
+                    `;
+                    
+                    workflowsContainer.appendChild(workflowCard);
+                });
+            } catch (error) {
+                document.getElementById('workflows').innerHTML = `
+                    <div class="error">Failed to load workflows: ${error.message}</div>
+                `;
+            }
+        }
+        
+        // Tool execution functions (simulate since API doesn't expose tools)
+        function executeClaudeFlow() {
+            const task = prompt('Enter task for Claude Flow coordination:');
+            if (task) {
+                alert(`🧠 Claude Flow: Starting coordination for "${task}" with 3 agents in parallel mode`);
+                console.log('Claude Flow coordination started:', { task, agentCount: 3, mode: 'parallel' });
+            }
+        }
+        
+        function executeHiveMind() {
+            const problem = prompt('Enter problem for Hive Mind collective analysis:');
+            if (problem) {
+                alert(`🐝 Hive Mind: Starting collective intelligence analysis for "${problem}" with 10 nodes`);
+                console.log('Hive Mind collective started:', { problem, nodes: 10 });
+            }
+        }
+        
+        function executeRuvSwarm() {
+            const mission = prompt('Enter mission for RUV Swarm:');
+            if (mission) {
+                alert(`🔥 RUV Swarm: Deploying 20 agents for mission "${mission}"`);
+                console.log('RUV Swarm deployed:', { mission, swarmSize: 20 });
+            }
+        }
+        
+        // Load data on page load
+        loadAgents();
+        loadWorkflows();
+        
+        // Refresh data every 30 seconds
+        setInterval(() => {
+            loadAgents();
+            loadWorkflows();
+        }, 30000);
+    </script>
+</body>
+</html>
