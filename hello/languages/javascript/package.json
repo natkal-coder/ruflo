@@ -1,0 +1,23 @@
+{
+  "name": "hello-javascript",
+  "version": "1.0.0",
+  "description": "Modern JavaScript Hello World example with ES6+ features",
+  "type": "module",
+  "main": "hello.js",
+  "scripts": {
+    "start": "node hello.js",
+    "test": "node test.js",
+    "browser": "echo 'Open hello.html in a browser'"
+  },
+  "keywords": [
+    "hello-world",
+    "javascript",
+    "es6",
+    "module"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

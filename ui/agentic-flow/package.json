@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:backend": "concurrently \"node server/index.ts\" \"node server/sync-manager.ts\"",
+    "dev:backend": "concurrently \"./check-server.sh\" \"node server/sync-manager.ts\"",
+    "dev:backend:force": "concurrently \"node server/index.ts\" \"node server/sync-manager.ts\"",
     "dev:full": "concurrently \"npm run dev:backend\" \"npm run dev\"",
     "dev:api": "node server.js",
     "setup": "npm install && echo 'Setup complete! Run npm run start to start all services.'",

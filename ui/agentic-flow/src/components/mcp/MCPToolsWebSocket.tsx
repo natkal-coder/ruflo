@@ -203,9 +203,11 @@ export default function MCPToolsWebSocket() {
   }
 
   return (
-    <div className="bg-black border border-green-500 rounded-lg overflow-hidden">
-      {/* Header */}
-      <div className="bg-green-500/10 border-b border-green-500 p-4">
+    <div className="h-full flex flex-col bg-black">
+      <div className="flex-1 p-4 overflow-hidden flex flex-col">
+        <div className="bg-black border border-green-500 rounded-lg overflow-hidden flex-1 flex flex-col">
+          {/* Header */}
+          <div className="bg-green-500/10 border-b border-green-500 p-4 flex-shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <Terminal className="w-6 h-6 text-green-400 mr-3" />
@@ -235,11 +237,11 @@ export default function MCPToolsWebSocket() {
         </div>
       </div>
 
-      <div className="flex h-[600px]">
+      <div className="flex flex-col lg:flex-row flex-1 min-h-0">
         {/* Left Panel - Tool List */}
-        <div className="w-1/2 border-r border-green-500 flex flex-col">
+        <div className="w-full lg:w-1/2 lg:border-r border-green-500 flex flex-col h-1/2 lg:h-full">
           {/* Search and Category Filter */}
-          <div className="p-4 border-b border-green-500/30">
+          <div className="p-4 border-b border-green-500/30 flex-shrink-0">
             <div className="mb-3">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-green-600" />
@@ -314,11 +316,11 @@ export default function MCPToolsWebSocket() {
         </div>
 
         {/* Right Panel - Tool Details */}
-        <div className="w-1/2 flex flex-col" ref={detailsRef}>
+        <div className="w-full lg:w-1/2 flex flex-col h-1/2 lg:h-full border-t lg:border-t-0 border-green-500" ref={detailsRef}>
           {selectedTool ? (
             <>
               {/* Tool Header */}
-              <div className="p-4 border-b border-green-500/30">
+              <div className="p-4 border-b border-green-500/30 flex-shrink-0">
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="font-mono text-lg text-green-400">
                     {selectedTool.name.replace('mcp__claude-flow__', '')}
@@ -435,6 +437,8 @@ export default function MCPToolsWebSocket() {
               </div>
             </div>
           )}
+        </div>
+      </div>
         </div>
       </div>
     </div>

@@ -360,9 +360,10 @@ ${result.metadata ? Object.entries(result.metadata).map(([key, value]) =>
   }
 
   return (
-    <div className="p-6 h-full overflow-hidden flex flex-col">
-      {/* Header */}
-      <div className="mb-6">
+    <div className="h-screen flex flex-col bg-black">
+      <div className="flex-1 p-4 md:p-6 overflow-hidden flex flex-col">
+        {/* Header */}
+        <div className="mb-4 md:mb-6 flex-shrink-0">
         <h1 className="text-2xl font-bold mb-2 glitch" data-text="MCP TOOLS INTERFACE">
           MCP TOOLS INTERFACE
         </h1>
@@ -397,7 +398,7 @@ ${result.metadata ? Object.entries(result.metadata).map(([key, value]) =>
       </div>
 
       {/* Search Bar */}
-      <div className="mb-4">
+      <div className="mb-4 flex-shrink-0">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-600 w-4 h-4" />
           <input
@@ -416,10 +417,10 @@ ${result.metadata ? Object.entries(result.metadata).map(([key, value]) =>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex gap-4 overflow-hidden">
+      <div className="flex-1 flex flex-col lg:flex-row gap-4 overflow-hidden min-h-0">
         {/* Categories and Tools List */}
-        <div className="w-1/2 overflow-y-auto retro-panel">
-          <div className="space-y-4">
+        <div className="w-full lg:w-1/2 overflow-y-auto retro-panel h-full">
+          <div className="space-y-4 p-4">
             {Object.entries(searchQuery ? filteredCategories : (toolsLoaded ? realToolCategories : toolCategories)).map(([key, category]) => {
               const Icon = category.icon
               return (
@@ -455,9 +456,9 @@ ${result.metadata ? Object.entries(result.metadata).map(([key, value]) =>
         </div>
 
         {/* Tool Details and Execution */}
-        <div className="w-1/2 overflow-y-auto retro-panel">
+        <div className="w-full lg:w-1/2 overflow-y-auto retro-panel h-full">
           {selectedTool ? (
-            <div className="space-y-4">
+            <div className="space-y-4 p-4">
               {/* Tool Header */}
               <div className="border-b border-green-900 pb-4">
                 <h2 className="text-lg font-bold text-green-400 mb-2">
@@ -610,7 +611,7 @@ ${result.metadata ? Object.entries(result.metadata).map(([key, value]) =>
               )}
             </div>
           ) : (
-            <div className="h-full flex items-center justify-center text-center">
+            <div className="h-full flex items-center justify-center text-center p-4">
               <div className="space-y-2">
                 <Terminal className="w-12 h-12 text-green-600 mx-auto animate-pulse" />
                 <p className="text-green-600">Select a tool to view details and execute</p>
@@ -621,6 +622,7 @@ ${result.metadata ? Object.entries(result.metadata).map(([key, value]) =>
             </div>
           )}
         </div>
+      </div>
       </div>
     </div>
   )

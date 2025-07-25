@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Real-Time Store Updates</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #00ff00;
+            font-family: monospace;
+            padding: 20px;
+        }
+        .status {
+            border: 1px solid #00ff00;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        button {
+            background: #001100;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            padding: 5px 10px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #002200;
+        }
+    </style>
+</head>
+<body>
+    <h1>Real-Time Store Test</h1>
+    
+    <div class="status">
+        <h2>Current Status</h2>
+        <div id="status">Waiting...</div>
+    </div>
+    
+    <div>
+        <button onclick="simulateSwarmInit()">Simulate Swarm Init</button>
+        <button onclick="simulateAgentSpawn()">Simulate Agent Spawn</button>
+        <button onclick="simulatePerformanceUpdate()">Update Performance</button>
+    </div>
+    
+    <div class="status">
+        <h2>Log</h2>
+        <div id="log"></div>
+    </div>
+
+    <script>
+        let swarmId = null;
+        let agentCount = 0;
+        
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            logDiv.innerHTML += `<div>${new Date().toISOString()} - ${message}</div>`;
+        }
+        
+        function updateStatus() {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `
+                <div>Swarm: ${swarmId || 'IDLE'}</div>
+                <div>Agents: ${agentCount}</div>
+            `;
+        }
+        
+        function simulateSwarmInit() {
+            swarmId = `swarm-${Date.now()}`;
+            log(`Created swarm: ${swarmId}`);
+            updateStatus();
+        }
+        
+        function simulateAgentSpawn() {
+            if (!swarmId) {
+                alert('Please init swarm first');
+                return;
+            }
+            agentCount++;
+            log(`Spawned agent #${agentCount}`);
+            updateStatus();
+        }
+        
+        function simulatePerformanceUpdate() {
+            const cpu = (Math.random() * 20 + 10).toFixed(1);
+            const memory = (Math.random() * 100 + 50).toFixed(1);
+            log(`Performance: CPU ${cpu}%, Memory ${memory}MB`);
+        }
+        
+        // Auto-update performance every 2 seconds
+        setInterval(() => {
+            if (swarmId) {
+                simulatePerformanceUpdate();
+            }
+        }, 2000);
+        
+        log('Test page loaded');
+        updateStatus();
+    </script>
+</body>
+</html>

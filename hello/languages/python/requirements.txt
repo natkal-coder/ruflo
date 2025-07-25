@@ -1,0 +1,2 @@
+# No external dependencies required for this simple Hello World example
+# This file exists to demonstrate Python project structure best practices

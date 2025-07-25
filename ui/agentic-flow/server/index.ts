@@ -117,7 +117,7 @@ class AgenticFlowServer {
       console.log('🔧 Initializing MCP handler...');
       await initializeMCPHandler();
 
-      // Start server
+      // Start server with error handling
       this.server.listen(PORT, () => {
         console.log(`\n✅ Agentic Flow Backend Server started successfully!\n`);
         console.log(`📊 API Server: http://localhost:${PORT}`);
@@ -128,6 +128,21 @@ class AgenticFlowServer {
         console.log(`   🤖 Mastra: ${this.mastra.isConnected() ? '✅ Connected' : '❌ Disconnected'}`);
         console.log(`\n📋 Health Check: http://localhost:${PORT}/health`);
         console.log(`📚 API Docs: http://localhost:${PORT}/api/docs`);
+      });
+
+      // Handle port already in use error
+      this.server.on('error', (error: NodeJS.ErrnoException) => {
+        if (error.code === 'EADDRINUSE') {
+          console.log(`\n✅ Agentic Flow Backend Server is already running on port ${PORT}\n`);
+          console.log(`📊 API Server: http://localhost:${PORT}`);
+          console.log(`🔌 WebSocket: ws://localhost:${PORT}`);
+          console.log(`🎯 UI Server: http://localhost:${UI_PORT}`);
+          console.log('\n💡 The server is already running in another terminal.');
+          console.log('   To restart, first stop the existing server with Ctrl+C.\n');
+          process.exit(0);
+        } else {
+          throw error;
+        }
       });
 
       // Handle graceful shutdown

@@ -1,122 +1,81 @@
-# Hello World Project Structure
+# Project Structure Documentation
+
+## Overview
+
+This project follows a clean, modular structure designed for:
+- Easy navigation and understanding
+- Scalability (easy to add new languages)
+- Separation of concerns
+- Consistent organization across languages
 
 ## Directory Layout
 
+### `/languages/`
+Contains all language-specific implementations. Each language has its own subdirectory with:
+- The main implementation file
+- Language-specific configuration files (package.json, go.mod, etc.)
+- Language-specific documentation (if needed)
+- Test files (if applicable)
+
+**Naming Convention:**
+- Directory names: lowercase language name (e.g., `python`, `javascript`, `go`)
+- Main files: `hello.<extension>` (e.g., `hello.py`, `hello.js`, `hello.go`)
+
+### `/scripts/`
+Contains utility scripts for project management:
+- `run-all.sh` - Executes all language implementations in sequence
+- Future scripts for testing, benchmarking, etc.
+
+### `/shared/`
+Contains resources shared across all implementations:
+- `/templates/` - Common templates for documentation, new language setup, etc.
+- Future shared resources like common test data, benchmarks, etc.
+
+## Design Principles
+
+1. **Self-Contained Languages**: Each language directory should be independently runnable
+2. **Consistent Naming**: Follow the same naming patterns across all languages
+3. **Best Practices**: Each implementation follows its language's conventions
+4. **Documentation**: Every language should have clear instructions for running
+5. **Automation**: Scripts should handle common tasks like running all implementations
+
+## Adding a New Language
+
+To add a new language implementation:
+
+1. Create directory: `mkdir -p languages/<language_name>`
+2. Implement `hello.<extension>` following the language's conventions
+3. Add any necessary configuration files
+4. Create a README.md for the language (use shared template)
+5. Update `/scripts/run-all.sh` to include the new language
+6. Update the main README.md
+
+## File Organization Guidelines
+
+### Language Directories
 ```
-hello/
-├── README.md                 # Main project documentation
-├── STRUCTURE.md             # This file - project structure documentation
-├── package.json             # Node.js project configuration
-├── languages/               # Language-specific implementations
-│   ├── cpp/
-│   │   ├── hello.cpp       # C++ source code
-│   │   ├── hello           # Compiled binary
-│   │   └── Makefile        # Build configuration
-│   ├── csharp/
-│   │   ├── Hello.cs        # C# source code (TO BE CREATED)
-│   │   └── Hello.csproj    # C# project file (TO BE CREATED)
-│   ├── go/
-│   │   ├── hello.go        # Go source code
-│   │   └── go.mod          # Go module file (TO BE CREATED)
-│   ├── java/
-│   │   ├── Hello.java      # Java source code
-│   │   └── Hello.class     # Compiled bytecode (TO BE CREATED)
-│   ├── javascript/
-│   │   └── hello.js        # JavaScript/Node.js code
-│   ├── php/
-│   │   └── hello.php       # PHP source code (TO BE CREATED)
-│   ├── python/
-│   │   └── hello.py        # Python source code
-│   ├── ruby/
-│   │   └── hello.rb        # Ruby source code (TO BE CREATED)
-│   ├── rust/
-│   │   ├── hello.rs        # Rust source code
-│   │   └── Cargo.toml      # Rust project file (TO BE CREATED)
-│   └── typescript/
-│       ├── hello.ts        # TypeScript source code (TO BE CREATED)
-│       └── tsconfig.json   # TypeScript configuration (TO BE CREATED)
-├── benchmarks/              # Performance testing
-│   ├── run-benchmarks.sh    # Benchmark runner script
-│   └── results/            # Benchmark results storage
-├── build/                   # Build artifacts
-│   └── .gitkeep            # Keep directory in git
-├── configs/                 # Configuration files
-│   └── languages.json      # Language configuration metadata
-├── containers/              # Docker/container files
-│   ├── Dockerfile.multi    # Multi-language container
-│   └── docker-compose.yml  # Container orchestration
-├── docs/                    # Documentation
-│   ├── api/                # API documentation
-│   ├── examples/           # Usage examples
-│   └── guides/             # Implementation guides
-├── examples/                # Extended examples
-│   └── advanced/           # Advanced usage patterns
-├── scripts/                 # Utility scripts
-│   ├── run-all.sh          # Run all implementations
-│   ├── build-all.sh        # Build all compiled languages (TO BE CREATED)
-│   └── test-all.sh         # Test all implementations (TO BE CREATED)
-├── shared/                  # Shared resources
-│   ├── configs/            # Shared configurations
-│   ├── scripts/            # Shared scripts
-│   ├── templates/          # Templates
-│   │   └── LANGUAGE_README_TEMPLATE.md
-│   └── utilities/          # Utility functions
-├── src/                     # Source for tooling/utilities
-│   └── .gitkeep
-├── tests/                   # Test suites
-│   ├── e2e/                # End-to-end tests
-│   ├── integration/        # Integration tests
-│   └── unit/               # Unit tests
-├── tools/                   # Development tools
-│   └── .gitkeep
-└── web/                     # Web interface
-    └── index.html          # Web UI for running examples (TO BE CREATED)
+languages/<language>/
+├── hello.<ext>              # Main implementation
+├── README.md               # Language-specific documentation
+├── <config_files>          # package.json, go.mod, requirements.txt, etc.
+├── test_hello.<ext>        # Test file (if applicable)
+└── examples/               # Additional examples (optional)
 ```
 
-## Naming Conventions
+### Shared Resources
+```
+shared/
+├── templates/
+│   ├── LANGUAGE_README_TEMPLATE.md
+│   └── NEW_LANGUAGE_CHECKLIST.md
+├── benchmarks/             # Common benchmark suite (future)
+└── docs/                   # Shared documentation (future)
+```
 
-### Source Files
-- **Pattern**: `hello.<extension>` (lowercase)
-- **Exception**: Java uses `Hello.java` (PascalCase per Java convention)
-- **Exception**: C# uses `Hello.cs` (PascalCase per C# convention)
+## Benefits of This Structure
 
-### Compiled Outputs
-- **C++**: `hello` (no extension, executable)
-- **Java**: `Hello.class` (bytecode)
-- **Rust**: `hello` (no extension, executable)
-- **C#**: `Hello.exe` or `Hello.dll` (depending on target)
-- **Go**: `hello` (no extension, executable)
-
-### Project Files
-- **Rust**: `Cargo.toml`
-- **C#**: `Hello.csproj`
-- **Go**: `go.mod`
-- **TypeScript**: `tsconfig.json`
-- **Node.js**: `package.json` (in language directory if needed)
-
-## File Organization Principles
-
-1. **Language Isolation**: Each language has its own directory
-2. **Self-Contained**: Each language directory contains all files needed to run
-3. **Consistent Structure**: Similar file layout across languages
-4. **Build Artifacts**: Compiled outputs stay in language directories
-5. **Shared Resources**: Common utilities in `/shared`
-6. **Documentation**: Language-specific docs in language directories
-7. **Tests**: Language-specific tests within each language directory
-
-## Missing Implementations
-
-The following need to be created:
-- C# implementation (`csharp/Hello.cs`)
-- PHP implementation (`php/hello.php`)
-- Ruby implementation (`ruby/hello.rb`)
-- TypeScript implementation (`typescript/hello.ts`)
-- Various project/build files as noted above
-
-## Build and Run Strategy
-
-Each language directory should be independently executable:
-- Interpreted languages: Direct execution
-- Compiled languages: Build step + execution
-- Container support: Each can run in isolation
-- Unified runner: `scripts/run-all.sh` executes all
+1. **Scalability**: Easy to add new languages without affecting existing ones
+2. **Maintainability**: Clear separation makes updates easier
+3. **Discoverability**: Intuitive structure helps new contributors
+4. **Consistency**: Uniform organization across all languages
+5. **Automation-Friendly**: Scripts can easily iterate over language directories

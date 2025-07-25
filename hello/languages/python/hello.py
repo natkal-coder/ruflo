@@ -1,14 +1,43 @@
 #!/usr/bin/env python3
 """
-Hello World in Python
-Simple and elegant implementation following PEP 8 guidelines.
+A simple Hello World program demonstrating Python best practices.
 
-To run: python hello.py
+This module provides a basic greeting function and serves as an example
+of idiomatic Python code following PEP 8 style guidelines.
 """
 
-def main():
-    """Main function that prints Hello, World!"""
-    print("Hello, World!")
+from typing import Optional
+
+
+def greet(name: Optional[str] = None) -> str:
+    """
+    Generate a greeting message.
+    
+    Args:
+        name: Optional name to personalize the greeting.
+              If None, uses a generic greeting.
+    
+    Returns:
+        A greeting string.
+    
+    Examples:
+        >>> greet()
+        'Hello, World!'
+        >>> greet("Python")
+        'Hello, Python!'
+    """
+    if name is None:
+        return "Hello, World!"
+    return f"Hello, {name}!"
+
+
+def main() -> None:
+    """Main entry point of the program."""
+    # Default greeting
+    print(greet())
+    
+    # Personalized greeting example
+    print(greet("Python"))
 
 
 if __name__ == "__main__":
