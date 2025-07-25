@@ -245,7 +245,7 @@ const ClaudeFlowTabs: React.FC = () => {
       </div>
 
       {/* Tab Content */}
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-y-auto">
         {activeTab && activeTabState && (
           <ClaudeFlow
             key={activeTabId}

@@ -1142,7 +1142,7 @@ const ClaudeFlow: React.FC<ClaudeFlowProps> = ({
   }
 
   return (
-    <div className="p-6 h-full flex flex-col bg-gray-950">
+    <div className="p-6 min-h-full flex flex-col bg-gray-950">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
