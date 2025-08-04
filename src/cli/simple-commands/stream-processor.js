@@ -64,6 +64,13 @@ export class StreamJsonProcessor extends Transform {
   processEvent(event) {
     this.eventCount++;
     
+    // If we have a concurrent display, update it instead of console logging
+    if (this.display) {
+      this.updateDisplay(event);
+      return;
+    }
+    
+    // Otherwise use the original console output
     // Clear previous line and move cursor up
     if (!this.options.verbose) {
       process.stdout.write('\r\x1B[K'); // Clear current line
@@ -121,6 +128,57 @@ export class StreamJsonProcessor extends Transform {
     // Show running status
     if (this.eventCount % 5 === 0 && event.type !== 'result') {
       this.updateProgress();
+    }
+  }
+  
+  /**
+   * Update the concurrent display instead of console
+   */
+  updateDisplay(event) {
+    switch (event.type) {
+      case 'system':
+        if (event.subtype === 'init') {
+          this.display.updateAgent(this.agentId, { status: 'active' });
+          this.display.addActivity(this.agentId, 'Initialized');
+        }
+        break;
+        
+      case 'assistant':
+        if (event.message?.content?.length > 0) {
+          const content = event.message.content[0];
+          if (content.type === 'text') {
+            const preview = content.text.substring(0, 80);
+            this.display.addActivity(this.agentId, preview);
+          } else if (content.type === 'tool_use') {
+            this.display.addActivity(this.agentId, `Using ${content.name}`, content.name);
+          }
+        }
+        break;
+        
+      case 'user':
+        // Tool results
+        if (event.message?.content?.[0]?.type === 'tool_result') {
+          const result = event.message.content[0];
+          if (!result.is_error) {
+            this.display.addActivity(this.agentId, 'Tool completed', null);
+          }
+        }
+        break;
+        
+      case 'result':
+        if (event.subtype === 'success') {
+          this.display.updateAgent(this.agentId, { 
+            status: 'completed',
+            progress: 100
+          });
+          this.display.addActivity(this.agentId, 'Task completed successfully');
+        } else if (event.is_error) {
+          this.display.updateAgent(this.agentId, { 
+            status: 'failed'
+          });
+          this.display.addActivity(this.agentId, `Failed: ${event.error || 'Unknown error'}`);
+        }
+        break;
     }
   }
 
