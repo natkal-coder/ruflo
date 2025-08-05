@@ -62,22 +62,26 @@ export class WorkflowExecutor {
       // Store workflow for reference
       this.currentWorkflow = workflowData;
       
-      console.log(`🚀 Starting workflow execution: ${this.executionId}`);
-      console.log(`📋 Workflow: ${workflowData.name}`);
-      console.log(`🎯 Strategy: MLE-STAR Machine Learning Engineering`);
-      
-      if (this.options.enableClaude) {
-        console.log(`🤖 Claude CLI Integration: Enabled`);
-      }
-      
-      if (this.options.nonInteractive) {
-        console.log(`🖥️  Non-Interactive Mode: Enabled`);
-        if (this.options.outputFormat === 'stream-json') {
-          console.log();
-          console.log('● Running MLE-STAR workflow with Claude CLI integration');
-          console.log('  ⎿  Command format: claude --print --output-format stream-json --verbose --dangerously-skip-permissions');
-          console.log('  ⎿  Each agent will show real-time stream output below');
-          console.log('  ⎿  Interactive-style formatting enabled');
+      if (this.options.logLevel === 'quiet') {
+        console.log(`🚀 Executing workflow: ${this.executionId}`);
+      } else {
+        console.log(`🚀 Starting workflow execution: ${this.executionId}`);
+        console.log(`📋 Workflow: ${workflowData.name}`);
+        console.log(`🎯 Strategy: MLE-STAR Machine Learning Engineering`);
+        
+        if (this.options.enableClaude) {
+          console.log(`🤖 Claude CLI Integration: Enabled`);
+        }
+        
+        if (this.options.nonInteractive) {
+          console.log(`🖥️  Non-Interactive Mode: Enabled`);
+          if (this.options.outputFormat === 'stream-json') {
+            console.log();
+            console.log('● Running MLE-STAR workflow with Claude CLI integration');
+            console.log('  ⎿  Command format: claude --print --output-format stream-json --verbose --dangerously-skip-permissions');
+            console.log('  ⎿  Each agent will show real-time stream output below');
+            console.log('  ⎿  Interactive-style formatting enabled');
+          }
         }
       }
       
