@@ -380,7 +380,8 @@ async function mleStarCommand(subArgs, flags) {
       timeout: parseInt(options.timeout) || 14400000, // 4 hours for ML workflows
       logLevel: options.verbose ? 'debug' : 'info',
       workflowName: 'MLE-STAR Machine Learning Engineering Workflow',
-      workflowType: 'ml'
+      workflowType: 'ml',
+      enableChaining: options.chaining !== false // Default to true for stream-json chaining
     });
     
     // Prepare MLE-STAR specific variables
