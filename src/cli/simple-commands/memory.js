@@ -238,13 +238,15 @@ async function importMemory(subArgs, saveMemory) {
   }
 }
 
-async function clearMemory(subArgs, saveMemory) {
-  const namespace = getNamespaceFromArgs(subArgs);
-
-  if (!namespace) {
-    printError('Usage: memory clear --namespace <namespace>');
-    printWarning('This will clear all entries in the specified namespace');
-    return;
+async function clearMemory(subArgs, saveMemory, namespace) {
+  if (!namespace || namespace === 'default') {
+    const nsFromArgs = getNamespaceFromArgs(subArgs);
+    if (!nsFromArgs) {
+      printError('Usage: memory clear --namespace <namespace>');
+      printWarning('This will clear all entries in the specified namespace');
+      return;
+    }
+    namespace = nsFromArgs;
   }
 
   try {
