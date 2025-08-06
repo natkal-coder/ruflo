@@ -811,16 +811,18 @@ The swarm should be self-documenting - use memory_store to save all important in
           shell: false,
         });
         
-        console.log('\n✓ Claude Code launched with swarm coordination prompt!');
-        console.log('  The swarm coordinator will orchestrate all agent tasks');
-        console.log('  Use MCP tools for coordination and memory sharing');
-        
-        console.log('\n💡 Pro Tips:');
-        console.log('─'.repeat(30));
-        console.log('• Use TodoWrite to track parallel tasks');
-        console.log('• Store results with mcp__claude-flow__memory_usage');
-        console.log('• Monitor progress with mcp__claude-flow__swarm_monitor');
-        console.log('• Check task status with mcp__claude-flow__task_status');
+        if (!isNonInteractive) {
+          console.log('\n✓ Claude Code launched with swarm coordination prompt!');
+          console.log('  The swarm coordinator will orchestrate all agent tasks');
+          console.log('  Use MCP tools for coordination and memory sharing');
+          
+          console.log('\n💡 Pro Tips:');
+          console.log('─'.repeat(30));
+          console.log('• Use TodoWrite to track parallel tasks');
+          console.log('• Store results with mcp__claude-flow__memory_usage');
+          console.log('• Monitor progress with mcp__claude-flow__swarm_monitor');
+          console.log('• Check task status with mcp__claude-flow__task_status');
+        }
         
         // Set up clean termination
         const cleanup = () => {
