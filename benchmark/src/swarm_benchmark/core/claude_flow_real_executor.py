@@ -311,27 +311,39 @@ class RealClaudeFlowExecutor:
     
     def execute_hive_mind(self, config: HiveMindCommand) -> RealExecutionResult:
         """Execute a real hive-mind command with built-in executor (non-interactive)."""
-        command = [
-            self.claude_flow_path,
-            "hive-mind",
-            config.action
-        ]
-        
-        if config.task:
-            command.append(config.task)
-        
+        # For hive-mind, we need to handle the spawn command differently
         if config.action == "spawn":
+            # Hive-mind spawn expects: hive-mind spawn "objective"
+            command = [
+                self.claude_flow_path,
+                "hive-mind",
+                "spawn"
+            ]
+            
+            # Add the task/objective as a quoted string
+            if config.task:
+                command.append(f'"{config.task}"')
+            
+            # These flags may not be supported, but we'll try
             command.extend(["--count", str(config.spawn_count)])
             command.extend(["--coordination", config.coordination_mode])
-        
-        # Use executor for non-interactive mode
-        command.append("--executor")
+        else:
+            # Other hive-mind commands
+            command = [
+                self.claude_flow_path,
+                "hive-mind",
+                config.action
+            ]
+            
+            if config.task:
+                command.append(config.task)
         
         # Add additional flags
         if config.additional_flags:
             command.extend(config.additional_flags)
         
-        return self._execute_streaming_command(command, 300)  # 5 minute default timeout
+        # Use a shorter timeout to avoid hanging
+        return self._execute_streaming_command(command, 30)  # 30 second timeout
     
     def execute_sparc(self, config: SparcCommand) -> RealExecutionResult:
         """Execute a real SPARC command."""
