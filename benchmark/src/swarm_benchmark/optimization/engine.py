@@ -399,8 +399,16 @@ class AsyncFileManager:
     async def readJSON(self, file_path: str) -> Any:
         """Read JSON data from file asynchronously."""
         try:
-            async with aiofiles.open(file_path, 'r') as f:
-                content = await f.read()
+            if AIOFILES_AVAILABLE and aiofiles:
+                async with aiofiles.open(file_path, 'r') as f:
+                    content = await f.read()
+                    return json.loads(content)
+            else:
+                # Fallback to synchronous read
+                with open(file_path, 'r') as f:
+                    content = f.read()
+                # Simulate async behavior
+                await asyncio.sleep(0.001)
                 return json.loads(content)
         except Exception as e:
             print(f"Error reading JSON from {file_path}: {e}")
