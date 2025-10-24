@@ -11,6 +11,7 @@ import { fileURLToPath } from 'url';
 import { EnhancedMemory } from '../memory/enhanced-memory.js';
 // Use the same memory system that npx commands use - singleton instance
 import { memoryStore } from '../memory/fallback-store.js';
+import { VERSION } from '../core/version.js';
 
 // Initialize agent tracker
 await import('./implementations/agent-tracker.js').catch(() => {
@@ -63,7 +64,7 @@ function resolveLegacyAgentType(legacyType) {
 
 class ClaudeFlowMCPServer {
   constructor() {
-    this.version = '2.5.0-alpha.131'; // Updated with Phase 4 SDK integration tools
+    this.version = VERSION; // Use version from package.json
     this.memoryStore = memoryStore; // Use shared singleton instance
     // Use the same memory system that already works
     this.capabilities = {
