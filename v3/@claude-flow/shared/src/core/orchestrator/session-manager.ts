@@ -78,7 +78,7 @@ export class SessionManager implements ISessionManager {
     memoryBankId: string,
   ): Promise<IAgentSession> {
     const session: IAgentSession = {
-      id: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      id: generateSecureSessionId(),
       agentId: profile.id,
       terminalId,
       startTime: new Date(),
