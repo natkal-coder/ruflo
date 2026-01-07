@@ -938,7 +938,7 @@ export class HeadlessWorkerExecutor extends EventEmitter {
     }
 
     // Deduplicate and limit
-    const uniqueFiles = [...new Set(files)].slice(0, this.config.maxContextFiles);
+    const uniqueFiles = Array.from(new Set(files)).slice(0, this.config.maxContextFiles);
 
     // Build context
     const contextParts: string[] = [];
