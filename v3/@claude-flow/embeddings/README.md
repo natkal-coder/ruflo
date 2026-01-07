@@ -18,16 +18,6 @@
 - **Similarity Functions** - Cosine, Euclidean, and dot product metrics
 - **75x Faster** - Agentic-flow ONNX is 75x faster than Transformers.js
 
-## Performance
-
-| Provider | Single Embed | Batch (per-item) | Notes |
-|----------|--------------|------------------|-------|
-| **agentic-flow** | 3ms | 2ms | ONNX SIMD, fastest |
-| **transformers** | 233ms | 78ms | Good quality |
-| **openai** | 50-100ms | varies | Best quality |
-| **mock** | <1ms | <1ms | Testing only |
-| **Cache hit** | <1ms | <1ms | All providers |
-
 ## Installation
 
 ```bash
