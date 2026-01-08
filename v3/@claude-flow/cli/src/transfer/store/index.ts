@@ -78,6 +78,9 @@ export {
 // Import types for the class
 import type { PatternRegistry, SearchOptions, SearchResult, DownloadOptions, DownloadResult, PublishOptions, PublishResult, PatternEntry, PatternCategory, KnownRegistry, StoreConfig } from './types.js';
 import type { CFPFormat } from '../types.js';
+import { PatternDiscovery } from './discovery.js';
+import { PatternDownloader } from './download.js';
+import { PatternPublisher } from './publish.js';
 
 /**
  * Pattern Store - High-level API
