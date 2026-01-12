@@ -48,7 +48,8 @@
     "vitest": "^4.0.16"
   },
   "dependencies": {
-    "@claude-flow/shared": "^3.0.0-alpha.1"
+    "@claude-flow/shared": "^3.0.0-alpha.1",
+    "@claude-flow/aidefence": "^3.0.0-alpha.1"
   },
   "publishConfig": {
     "access": "public",
