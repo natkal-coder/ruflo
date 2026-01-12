@@ -680,28 +680,34 @@ Working in parallel - I'll synthesize when they complete."
 export function generateMinimalClaudeMd(options: InitOptions): string {
   return `# Claude Code Configuration - Claude Flow V3
 
+## Anti-Drift Config (PREFERRED)
+\`\`\`bash
+npx @claude-flow/cli@latest swarm init --topology hierarchical --max-agents 8 --strategy specialized
+\`\`\`
+- hierarchical + specialized + 6-8 agents + raft consensus
+
 ## Quick Reference
 
-- **Topology**: ${options.runtime.topology}
-- **Max Agents**: ${options.runtime.maxAgents}
+- **Topology**: hierarchical (prevents drift)
+- **Max Agents**: 8
+- **Strategy**: specialized
 - **Memory**: ${options.runtime.memoryBackend}
 - **HNSW**: ${options.runtime.enableHNSW ? 'Enabled' : 'Disabled'}
-- **Neural**: ${options.runtime.enableNeural ? 'Enabled' : 'Disabled'}
 
 ## Key Rules
 
-1. **Batch Operations**: All related operations in ONE message
-2. **Task Tool**: Use Claude Code's Task tool for agent execution
-3. **CLI Tools**: Use via Bash for coordination (swarm, memory, hooks)
-4. **File Organization**: Never save to root folder
+1. **Batch Operations**: All related ops in ONE message
+2. **Task Tool**: Claude Code's Task tool for execution
+3. **CLI Tools**: Bash for coordination
+4. **Anti-Drift**: Always use hierarchical + specialized for coding
 
 ## Agent Execution Pattern
 
 \`\`\`javascript
-// Single message with parallel agents
-Task("Researcher", "Analyze requirements...", "researcher")
-Task("Coder", "Implement features...", "coder")
-Task("Tester", "Write tests...", "tester")
+// Single message with parallel agents (background)
+Task({prompt: "Analyze...", subagent_type: "researcher", run_in_background: true})
+Task({prompt: "Implement...", subagent_type: "coder", run_in_background: true})
+Task({prompt: "Test...", subagent_type: "tester", run_in_background: true})
 \`\`\`
 
 ## 26 CLI Commands
