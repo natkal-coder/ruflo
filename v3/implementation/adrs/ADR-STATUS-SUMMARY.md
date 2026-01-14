@@ -321,6 +321,20 @@ Stats handler (`hooks/intelligence/stats`) pulls from actual implementations:
 | `package.json` (umbrella) | hono@4.11.3 vulnerable | npm override to >=4.11.4 |
 | `package.json` (umbrella) | Unpinned agentdb | Pinned to 2.0.0-alpha.3.4 |
 
+### Alpha.113-117 CLI Fixes (2026-01-14)
+
+| File | Issue | Fix |
+|------|-------|-----|
+| `src/memory/memory-initializer.ts` | `memory_entries has no column named content` | Added `ensureSchemaColumns()` migration for older databases |
+| `src/commands/hooks.ts` | `Required option missing: --task-id` | Made `--task-id` optional with auto-generation |
+| `src/commands/swarm.ts` | `Invalid value for --strategy: specialized` | Added `specialized`, `adaptive` to allowed strategies |
+| `src/parser.ts` | Global `-q` conflict | Changed global `quiet` from `-q` to `-Q` |
+| `src/commands/memory.ts` | `-q` conflict with `quantize` | Changed `quantize` from `-q` to `-z` |
+| `src/commands/security.ts` | Boolean `-q` (quick) overriding string `-q` (query) | Changed `quick` from `-q` to `-Q` |
+| `src/commands/daemon.ts` | Boolean `-q` (quiet) overriding string `-q` (query) | Changed `quiet` from `-q` to `-Q` (2 locations) |
+
+**Root Cause:** CLI parser builds a global alias map from ALL commands. Boolean `-q` options (`quiet`, `quick`) were overriding the string `-q` option for `query` in `memory search -q "hello"`.
+
 ---
 
 ## Quick Wins (ADR-017) - Completed
