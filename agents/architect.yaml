@@ -8,4 +8,16 @@ capabilities:
 optimizations:
   - context-caching
   - memory-persistence
+
+# ADR-026: 3-Tier Model Routing
+modelRouting:
+  defaultModel: opus
+  agentBoosterIntents: []
+  opusKeywords:
+    - microservices
+    - distributed
+    - scalability
+    - system-design
+    - architecture
+
 createdAt: "2026-01-14T20:17:21.782Z"
