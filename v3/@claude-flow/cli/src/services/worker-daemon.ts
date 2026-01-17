@@ -101,6 +101,7 @@ const DEFAULT_WORKERS: WorkerConfigInternal[] = [
   { type: 'testgaps', intervalMs: 20 * 60 * 1000, offsetMs: 8 * 60 * 1000, priority: 'normal', description: 'Test coverage analysis', enabled: true },
   { type: 'predict', intervalMs: 10 * 60 * 1000, offsetMs: 0, priority: 'low', description: 'Predictive preloading', enabled: false },
   { type: 'document', intervalMs: 60 * 60 * 1000, offsetMs: 0, priority: 'low', description: 'Auto-documentation', enabled: false },
+  { type: 'attention', intervalMs: 20 * 60 * 1000, offsetMs: 10 * 60 * 1000, priority: 'normal', description: 'Attention mechanism optimization', enabled: true },
 ];
 
 // Worker timeout (5 minutes max per worker)
