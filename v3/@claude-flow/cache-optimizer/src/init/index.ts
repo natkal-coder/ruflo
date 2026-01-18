@@ -26,6 +26,8 @@ export {
   PROFILES,
   type ProfileId,
   type Profile,
+  type ProfileCacheConfig,
+  type ProfileHandoffConfig,
   type HookConfiguration,
   type HookEntry,
 } from './profiles.js';
