@@ -169,6 +169,18 @@ Understanding how `@anthropic-ai/claude-code` (v2.1.12) manages content is essen
 │   │   │   ├── hyperbolic.ts       # Poincaré ball for hierarchies
 │   │   │   ├── cross-attention.ts  # Query-context relevance
 │   │   │   └── index.ts
+│   │   ├── gnn/                    # Graph Neural Networks
+│   │   │   ├── cache-gnn.ts        # GCN/GAT for relationship learning
+│   │   │   ├── graph-builder.ts    # Optimal graph structure builder
+│   │   │   └── index.ts
+│   │   ├── grnn/                   # Gated Recurrent Neural Networks
+│   │   │   ├── fast-grnn.ts        # Lightweight temporal learning
+│   │   │   └── index.ts
+│   │   ├── learning/               # Self-learning framework
+│   │   │   ├── measurement.ts      # Metrics collection
+│   │   │   ├── refinement.ts       # Bayesian hyperparameter tuning
+│   │   │   ├── reporting.ts        # Multi-format report generation
+│   │   │   └── index.ts
 │   │   ├── sona/
 │   │   │   ├── trajectory.ts       # Experience trajectories
 │   │   │   ├── ewc-plus.ts         # Elastic weight consolidation
@@ -181,6 +193,7 @@ Understanding how `@anthropic-ai/claude-code` (v2.1.12) manages content is essen
 │   │   │   │   ├── tool-expert.ts
 │   │   │   │   └── conversation-expert.ts
 │   │   │   └── index.ts
+│   │   ├── hyperbolic-cache.ts     # Hyperbolic geometry cache
 │   │   └── index.ts
 │   │
 │   ├── temporal/
