@@ -159,6 +159,33 @@ export class CacheOptimizer {
   }
 
   /**
+   * Access an entry by source key (alias for get with source lookup)
+   */
+  access(sourceKey: string): CacheEntry | undefined {
+    // Find entry by source metadata
+    for (const entry of this.entries.values()) {
+      if (entry.metadata?.source === sourceKey) {
+        entry.accessCount++;
+        entry.lastAccessedAt = Date.now();
+        this.updateAccessOrder(entry.id);
+        this.tokenCounter.recordHit();
+
+        // Promote to hot tier if configured
+        if (this.config.temporal.promoteOnAccess && entry.tier !== 'hot') {
+          entry.tier = 'hot';
+          // Reset compressed state for hot tier
+          if (entry.compressed) {
+            entry.compressed = undefined;
+          }
+        }
+        return entry;
+      }
+    }
+    this.tokenCounter.recordMiss();
+    return undefined;
+  }
+
+  /**
    * Score all entries against current context
    */
   async scoreAll(context: ScoringContext): Promise<Map<string, RelevanceScore>> {
