@@ -1378,8 +1378,10 @@ run();
       this.activeRequests.delete(requestId);
       this.metrics.activeRequests--;
 
+      // Cleanup both request and script files
       try {
         await unlink(requestFile);
+        await unlink(scriptFile);
       } catch {
         // Ignore cleanup errors
       }
