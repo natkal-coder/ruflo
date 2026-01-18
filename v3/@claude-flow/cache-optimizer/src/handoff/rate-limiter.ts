@@ -126,6 +126,11 @@ export class RateLimiter extends EventEmitter {
   recordTokens(count: number): boolean {
     if (!this.config.maxTokensPerMinute) return true;
 
+    // Update lastRequest to prevent cleanup from resetting tokens
+    if (this.lastRequest === 0) {
+      this.lastRequest = Date.now();
+    }
+
     this.cleanup();
 
     if (this.tokens + count > this.config.maxTokensPerMinute) {
@@ -134,6 +139,7 @@ export class RateLimiter extends EventEmitter {
     }
 
     this.tokens += count;
+    this.lastRequest = Date.now();
     return true;
   }
 
