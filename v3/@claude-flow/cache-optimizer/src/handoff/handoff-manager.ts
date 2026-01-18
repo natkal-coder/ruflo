@@ -8,7 +8,7 @@
 
 import { spawn, type ChildProcess } from 'child_process';
 import { randomUUID } from 'crypto';
-import { mkdir, writeFile, readFile, unlink } from 'fs/promises';
+import { mkdir, writeFile, unlink } from 'fs/promises';
 import { join } from 'path';
 import type {
   HandoffConfig,
@@ -17,9 +17,7 @@ import type {
   HandoffResponse,
   HandoffQueueItem,
   HandoffMetrics,
-  HandoffStatus,
   HandoffContext,
-  DEFAULT_HANDOFF_CONFIG,
 } from '../types.js';
 
 // Re-export default config from types
