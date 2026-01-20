@@ -246,8 +246,6 @@ export interface UpgradeResult {
  * This is safe for existing users who want the latest statusline fixes
  */
 export async function executeUpgrade(targetDir: string): Promise<UpgradeResult> {
-  const platform = detectPlatform();
-
   const result: UpgradeResult = {
     success: true,
     updated: [],
