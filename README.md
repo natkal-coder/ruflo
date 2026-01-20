@@ -4535,6 +4535,93 @@ Domain-Driven Design with bounded contexts, clean architecture, and measured per
 ---
 
 <details>
+<summary><strong>🌐 Browser Automation — @claude-flow/browser</strong></summary>
+
+[![npm version](https://img.shields.io/npm/v/@claude-flow/browser?color=blue&label=npm)](https://www.npmjs.com/package/@claude-flow/browser)
+
+AI-optimized browser automation integrating [agent-browser](https://github.com/AugmentCode/agent-browser) with claude-flow for intelligent web automation, trajectory learning, and multi-agent browser coordination.
+
+### Installation
+
+```bash
+npm install @claude-flow/browser
+
+# agent-browser CLI (auto-suggested on install, or install manually)
+npm install -g agent-browser@latest
+```
+
+### Quick Start
+
+```typescript
+import { createBrowserService } from '@claude-flow/browser';
+
+const browser = createBrowserService({
+  sessionId: 'my-session',
+  enableSecurity: true,  // URL/PII scanning
+  enableMemory: true,    // Trajectory learning
+});
+
+// Track actions for ReasoningBank/SONA learning
+browser.startTrajectory('Login to dashboard');
+
+await browser.open('https://example.com/login');
+
+// Use element refs (93% context reduction vs CSS selectors)
+const snapshot = await browser.snapshot({ interactive: true });
+await browser.fill('@e1', 'user@example.com');
+await browser.fill('@e2', 'password');
+await browser.click('@e3');
+
+await browser.endTrajectory(true, 'Login successful');
+await browser.close();
+```
+
+### Key Features
+
+| Feature | Description |
+|---------|-------------|
+| **59 MCP Tools** | Complete browser automation via MCP protocol |
+| **Element Refs** | 93% context reduction with `@e1`, `@e2` refs |
+| **Trajectory Learning** | Records actions for ReasoningBank/SONA |
+| **Security Scanning** | URL validation, PII detection, XSS/SQL injection prevention |
+| **9 Workflow Templates** | Login, OAuth, scraping, testing, monitoring |
+| **Swarm Coordination** | Multi-session parallel browser automation |
+
+### Security Integration
+
+```typescript
+import { getSecurityScanner, isUrlSafe, containsPII } from '@claude-flow/browser';
+
+// URL threat detection
+const scanner = getSecurityScanner({ requireHttps: true });
+const result = await scanner.scanUrl('https://example.com');
+// { safe: true, threats: [], score: 1.0 }
+
+// PII detection
+containsPII('SSN: 123-45-6789'); // true
+
+// Input validation (XSS, SQL injection)
+scanner.validateInput('<script>alert(1)</script>', 'comment');
+// { safe: false, threats: [{type: 'xss', ...}] }
+```
+
+### Workflow Templates
+
+```typescript
+import { listWorkflows, getWorkflow } from '@claude-flow/browser';
+
+listWorkflows(); // ['login-basic', 'login-oauth', 'scrape-table', ...]
+const template = getWorkflow('login-basic');
+// { steps: [{action: 'open'}, {action: 'fill'}, ...], variables: [...] }
+```
+
+📖 [Full Documentation](./v3/@claude-flow/browser/README.md)
+
+</details>
+
+---
+
+<details>
 <summary><h2>📦 Release Management — @claude-flow/deployment</h2></summary>
 
 Automated release management, versioning, and CI/CD for Claude Flow packages.
