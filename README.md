@@ -4706,7 +4706,7 @@ const template = getWorkflow('login-basic');
 ---
 
 <details>
-<summary><h2>📦 Release Management — @claude-flow/deployment</h2></summary>
+<summary>📦 <strong>Release Management</strong> — @claude-flow/deployment</summary>
 
 Automated release management, versioning, and CI/CD for Claude Flow packages.
 
