@@ -2886,6 +2886,26 @@ console.log(results);
 // [{ key: 'auth-pattern', similarity: 0.92, content: '...' }]
 ```
 
+**CLI Commands:**
+```bash
+# Initialize memory database
+npx claude-flow@alpha memory init --force
+
+# Store patterns
+npx claude-flow@alpha memory store --key "pattern-auth" --value "JWT authentication with refresh tokens"
+npx claude-flow@alpha memory store --key "pattern-cache" --value "Redis caching for API responses"
+
+# Build HNSW index for 150x-12,500x faster search
+npx claude-flow@alpha memory search --query "authentication" --build-hnsw
+
+# Semantic search (uses HNSW if built)
+npx claude-flow@alpha memory search --query "how to cache data" --limit 5
+
+# List and manage entries
+npx claude-flow@alpha memory list --namespace patterns
+npx claude-flow@alpha memory stats
+```
+
 </details>
 
 <details>
