@@ -315,7 +315,24 @@ function getSwarmStatus() {
         return {
           activeAgents: data.swarm.agent_count || 0,
           maxAgents: CONFIG.maxAgents,
-          coordinationActive: data.swarm.coordination_active || false,
+          coordinationActive: data.swarm.coordination_active || data.swarm.active || false,
+        };
+      }
+    } catch (e) {
+      // Fall through to v3-progress.json check
+    }
+  }
+
+  // Also check v3-progress.json for swarm data (secondary source)
+  const progressPath = path.join(process.cwd(), '.claude-flow', 'metrics', 'v3-progress.json');
+  if (fs.existsSync(progressPath)) {
+    try {
+      const data = JSON.parse(fs.readFileSync(progressPath, 'utf-8'));
+      if (data.swarm) {
+        return {
+          activeAgents: data.swarm.activeAgents || data.swarm.agent_count || 0,
+          maxAgents: data.swarm.totalAgents || CONFIG.maxAgents,
+          coordinationActive: data.swarm.active || (data.swarm.activeAgents > 0),
         };
       }
     } catch (e) {
@@ -323,7 +340,7 @@ function getSwarmStatus() {
     }
   }
 
-  // Platform-specific process detection
+  // Platform-specific process detection (fallback)
   const isWindows = process.platform === 'win32';
   try {
     if (isWindows) {
@@ -333,10 +350,17 @@ function getSwarmStatus() {
       activeAgents = Math.max(0, Math.floor(nodeProcesses / 3)); // Heuristic
       coordinationActive = nodeProcesses > 0;
     } else {
-      // Unix: use ps
-      const ps = execSync('ps aux 2>/dev/null | grep -c agentic-flow || echo "0"', { encoding: 'utf-8' });
-      activeAgents = Math.max(0, parseInt(ps.trim()) - 1);
-      coordinationActive = activeAgents > 0;
+      // Unix: use ps - check for various agent process patterns
+      try {
+        const ps = execSync('ps aux 2>/dev/null | grep -E "(agentic-flow|claude-flow|mcp.*server)" | grep -v grep | wc -l', { encoding: 'utf-8' });
+        activeAgents = Math.max(0, parseInt(ps.trim()));
+        coordinationActive = activeAgents > 0;
+      } catch (e) {
+        // Fallback to simple agentic-flow check
+        const ps = execSync('ps aux 2>/dev/null | grep -c agentic-flow || echo "0"', { encoding: 'utf-8' });
+        activeAgents = Math.max(0, parseInt(ps.trim()) - 1);
+        coordinationActive = activeAgents > 0;
+      }
     }
   } catch (e) {
     // Ignore errors - return defaults
