@@ -47,7 +47,7 @@ import {
   validateTopologyInput,
   validateMemoryGateInput,
   validateConfig,
-} from './schemas';
+} from './schemas.js';
 
 // ============================================================================
 // WASM Bridge Implementation
