@@ -145,7 +145,7 @@ export type {
   PrimeRadiantEvent,
   PrimeRadiantEventPayload,
   IPrimeRadiantEventEmitter,
-} from './interfaces';
+} from './interfaces.js';
 
 export { HookPriority } from './interfaces.js';
 
