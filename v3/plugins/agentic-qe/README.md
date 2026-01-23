@@ -38,11 +38,11 @@ See [ADR-030](../../implementation/adrs/ADR-030-agentic-qe-integration.md) for a
 ## Installation
 
 ```bash
-# Install agentic-qe and register as claude-flow plugin
-npm install agentic-qe
+# Install from npm
+npm install @claude-flow/plugin-agentic-qe
 
-# Register plugin with claude-flow
-npx @claude-flow/cli@v3alpha plugins install agentic-qe
+# Or register with Claude Flow CLI
+npx claude-flow@v3alpha plugins install @claude-flow/plugin-agentic-qe
 ```
 
 ## Features
