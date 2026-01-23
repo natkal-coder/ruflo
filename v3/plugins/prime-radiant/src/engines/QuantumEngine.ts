@@ -403,7 +403,10 @@ export class QuantumEngine implements IQuantumEngine {
 
     for (let i = 0; i < n; i++) {
       for (let j = i + 1; j < n; j++) {
-        const dist = this.euclideanDistance(points[i], points[j]);
+        const pi = points[i];
+        const pj = points[j];
+        if (!pi || !pj) continue;
+        const dist = this.euclideanDistance(pi, pj);
         if (dist <= threshold) {
           simplices.push([i, j]);
         }
