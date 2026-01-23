@@ -176,7 +176,7 @@ export class PluginDiscoveryService {
     } catch (error) {
       console.error(`[PluginDiscovery] Failed to discover registry:`, error);
       // Return demo registry on error
-      return this.createDemoRegistry(registry);
+      return this.createDemoRegistryAsync(registry);
     }
   }
 
