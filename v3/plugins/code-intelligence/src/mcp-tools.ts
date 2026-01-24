@@ -909,7 +909,7 @@ function findBreakingChanges(
 function buildSuggestedModules(
   graph: DependencyGraph,
   partition: Map<string, number>,
-  strategy: string
+  _strategy: string
 ): SuggestedModule[] {
   const modules: SuggestedModule[] = [];
   const partitionGroups = new Map<number, string[]>();
