@@ -187,9 +187,9 @@ describe('HealthcareGNNBridge', () => {
     bridge = new HealthcareGNNBridge();
   });
 
-  afterEach(async () => {
+  afterEach(() => {
     try {
-      await bridge.destroy();
+      bridge.destroy();
     } catch {
       // Ignore cleanup errors
     }
@@ -202,34 +202,34 @@ describe('HealthcareGNNBridge', () => {
 
     it('should initialize successfully', async () => {
       await bridge.initialize();
-      expect(bridge.isInitialized()).toBe(true);
+      expect(bridge.initialized).toBe(true);
     });
 
     it('should initialize with custom config', async () => {
       await bridge.initialize({
-        hiddenDim: 128,
+        hiddenDimensions: 128,
         numLayers: 4,
-        aggregation: 'mean',
+        aggregationType: 'mean',
       });
-      expect(bridge.isInitialized()).toBe(true);
+      expect(bridge.initialized).toBe(true);
     });
 
     it('should handle double initialization gracefully', async () => {
       await bridge.initialize();
       await bridge.initialize();
-      expect(bridge.isInitialized()).toBe(true);
+      expect(bridge.initialized).toBe(true);
     });
   });
 
   describe('Lifecycle', () => {
     it('should destroy successfully', async () => {
       await bridge.initialize();
-      await bridge.destroy();
-      expect(bridge.isInitialized()).toBe(false);
+      bridge.destroy();
+      expect(bridge.initialized).toBe(false);
     });
 
-    it('should handle destroy when not initialized', async () => {
-      await expect(bridge.destroy()).resolves.not.toThrow();
+    it('should handle destroy when not initialized', () => {
+      expect(() => bridge.destroy()).not.toThrow();
     });
   });
 
