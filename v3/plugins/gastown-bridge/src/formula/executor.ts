@@ -32,6 +32,16 @@ import {
 
 import type { GtBridge, GtResult } from '../bridges/gt-bridge.js';
 
+import {
+  stepPool,
+  formulaPool,
+  moleculePool,
+  PooledStep,
+  PooledFormula,
+  PooledMolecule,
+  withArenaSync,
+} from '../memory/index.js';
+
 // ============================================================================
 // Types
 // ============================================================================
