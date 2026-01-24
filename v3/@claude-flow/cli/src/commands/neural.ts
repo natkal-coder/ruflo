@@ -654,7 +654,7 @@ const exportCommand: Command = {
         publicKey = Buffer.from(publicKeyBytes).toString('hex');
       }
 
-      // Final export package
+      // SECURITY: Final export package - verify no secrets leaked
       const exportPackage = {
         pinataContent: exportData,
         pinataMetadata: {
@@ -667,7 +667,25 @@ const exportCommand: Command = {
         },
         signature,
         publicKey: publicKey ? `ed25519:${publicKey}` : null,
+        // Note: Private key is ephemeral and NEVER stored or exported
       };
+
+      // SECURITY AUDIT: Ensure no secrets in export
+      const exportStr = JSON.stringify(exportPackage);
+      const secretPatterns = [
+        /sk-ant-[a-zA-Z0-9-]+/,  // Anthropic keys
+        /sk-[a-zA-Z0-9]{48}/,    // OpenAI keys
+        /AIza[a-zA-Z0-9-_]{35}/, // Google keys
+        /pinata_[a-zA-Z0-9]+/,   // Pinata JWT
+        /-----BEGIN.*KEY-----/,  // PEM keys
+      ];
+
+      for (const pattern of secretPatterns) {
+        if (pattern.test(exportStr)) {
+          spinner.fail('SECURITY: Export contains potential API keys - aborting');
+          return { success: false, exitCode: 1 };
+        }
+      }
 
       // Output handling
       if (outputFile) {
