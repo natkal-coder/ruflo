@@ -18,13 +18,15 @@
 import { EventEmitter } from 'events';
 import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
-import {
+import type {
   Convoy,
   ConvoyStatus,
   ConvoyProgress,
   CreateConvoyOptions,
   Bead,
   BeadStatus,
+} from '../types.js';
+import {
   ConvoySchema,
   CreateConvoyOptionsSchema,
 } from '../types.js';
