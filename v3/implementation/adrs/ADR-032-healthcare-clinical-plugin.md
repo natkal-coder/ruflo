@@ -251,6 +251,15 @@ Navigate medical ontology hierarchies.
 ### Neutral
 - Plugin can operate in "research mode" without clinical deployment
 
+## Related ADRs
+
+| ADR | Relationship |
+|-----|--------------|
+| ADR-004: Plugin Architecture | Foundation - Defines plugin structure |
+| ADR-017: RuVector Integration | Dependency - Provides WASM packages |
+| ADR-041: Hyperbolic Reasoning | Related - Medical ontology navigation |
+| ADR-039: Cognitive Kernel | Related - Clinical decision support reasoning |
+
 ## References
 
 - HL7 FHIR R4 Specification: https://hl7.org/fhir/R4/
