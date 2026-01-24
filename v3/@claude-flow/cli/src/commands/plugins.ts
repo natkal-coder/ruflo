@@ -217,76 +217,72 @@ const installCommand: Command = {
     spinner.start();
 
     try {
-      let plugin: PluginEntry | undefined;
+      const manager = getPluginManager();
+      await manager.initialize();
 
-      if (!isLocalPath) {
-        // Fetch from IPFS registry
-        const discovery = createPluginDiscoveryService();
-        const result = await discovery.discoverRegistry(registryName);
-
-        if (!result.success || !result.registry) {
-          spinner.fail('Failed to discover registry');
-          return { success: false, exitCode: 1 };
-        }
-
-        // Find the plugin
-        plugin = result.registry.plugins.find(p => p.name === name || p.id === name);
-        if (!plugin) {
-          spinner.fail(`Plugin not found: ${name}`);
-          output.writeln();
-          output.writeln(output.dim('Run "claude-flow plugins list" to see available plugins'));
-          return { success: false, exitCode: 1 };
-        }
-
-        spinner.setText(`Found ${plugin.displayName} v${plugin.version}`);
-        await new Promise(r => setTimeout(r, 200));
-
-        // Check permissions
-        if (plugin.permissions.length > 0) {
-          spinner.setText('Checking permissions...');
-          await new Promise(r => setTimeout(r, 200));
-        }
-
-        spinner.setText(`Downloading from IPFS (CID: ${plugin.cid.slice(0, 12)}...)...`);
-        await new Promise(r => setTimeout(r, 300));
-
-        if (verify) {
-          spinner.setText('Verifying checksum...');
-          await new Promise(r => setTimeout(r, 200));
-        }
+      // Check if already installed
+      const existingPlugin = await manager.getPlugin(name);
+      if (existingPlugin) {
+        spinner.fail(`Plugin ${name} is already installed (v${existingPlugin.version})`);
+        output.writeln();
+        output.writeln(output.dim('Use "claude-flow plugins upgrade -n ' + name + '" to update'));
+        return { success: false, exitCode: 1 };
       }
 
-      spinner.setText('Installing dependencies...');
-      await new Promise(r => setTimeout(r, 300));
+      let result;
+      let plugin: PluginEntry | undefined;
 
-      spinner.setText('Registering hooks and commands...');
-      await new Promise(r => setTimeout(r, 200));
+      if (isLocalPath) {
+        // Install from local path
+        spinner.setText(`Installing from ${name}...`);
+        result = await manager.installFromLocal(name);
+      } else {
+        // First, try to find in registry for metadata
+        spinner.setText(`Discovering ${name} in registry...`);
+        const discovery = createPluginDiscoveryService();
+        const registryResult = await discovery.discoverRegistry(registryName);
 
-      spinner.succeed(`Installed ${plugin?.displayName || name}@${plugin?.version || version}`);
+        if (registryResult.success && registryResult.registry) {
+          plugin = registryResult.registry.plugins.find(p => p.name === name || p.id === name);
+        }
+
+        if (plugin) {
+          spinner.setText(`Found ${plugin.displayName} v${plugin.version}`);
+        }
+
+        // Install from npm (since IPFS is demo mode)
+        spinner.setText(`Installing ${name} from npm...`);
+        result = await manager.installFromNpm(name, version !== 'latest' ? version : undefined);
+      }
+
+      if (!result.success) {
+        spinner.fail(`Installation failed: ${result.error}`);
+        return { success: false, exitCode: 1 };
+      }
+
+      const installed = result.plugin!;
+      spinner.succeed(`Installed ${installed.name}@${installed.version}`);
 
       output.writeln();
 
+      const boxContent = [
+        `Plugin: ${installed.name}`,
+        `Version: ${installed.version}`,
+        `Source: ${installed.source}`,
+        `Path: ${installed.path || 'N/A'}`,
+        ``,
+        `Hooks registered: ${installed.hooks?.length || 0}`,
+        `Commands added: ${installed.commands?.length || 0}`,
+      ];
+
       if (plugin) {
-        output.printBox([
-          `Plugin: ${plugin.displayName}`,
-          `Version: ${plugin.version}`,
-          `CID: ${plugin.cid}`,
-          `Size: ${(plugin.size / 1024).toFixed(1)} KB`,
-          `Trust: ${plugin.trustLevel}`,
-          ``,
-          `Hooks registered: ${plugin.hooks.length}`,
-          `Commands added: ${plugin.commands.length}`,
-          `Permissions: ${plugin.permissions.join(', ') || 'none'}`,
-        ].join('\n'), 'Installation Complete');
-      } else {
-        output.printBox([
-          `Plugin: ${name}`,
-          `Version: ${version}`,
-          `Location: node_modules/${name}`,
-        ].join('\n'), 'Installation Complete');
+        boxContent.push(`Trust: ${plugin.trustLevel}`);
+        boxContent.push(`Permissions: ${plugin.permissions.join(', ') || 'none'}`);
       }
 
-      return { success: true, data: plugin };
+      output.printBox(boxContent.join('\n'), 'Installation Complete');
+
+      return { success: true, data: installed };
     } catch (error) {
       spinner.fail('Installation failed');
       output.printError(`Error: ${String(error)}`);
