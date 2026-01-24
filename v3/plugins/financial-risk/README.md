@@ -25,7 +25,7 @@ npm install @claude-flow/plugin-financial-risk
 ### CLI
 
 ```bash
-npx @claude-flow/cli plugins install financial-risk
+npx claude-flow plugins install --name @claude-flow/plugin-financial-risk
 ```
 
 ## Quick Start
