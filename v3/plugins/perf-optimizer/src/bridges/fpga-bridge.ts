@@ -67,8 +67,9 @@ export class PerfFpgaBridge implements FpgaBridgeInterface {
 
     try {
       // Try to load WASM module
-      // Dynamic import of optional WASM module - type ignored since module may not exist
-      const wasmModule = await (import('@claude-flow/ruvector-upstream') as Promise<unknown>).catch(() => null);
+      // Dynamic import of optional WASM module - use string literal to avoid type error
+      const modulePath = '@claude-flow/ruvector-upstream';
+      const wasmModule = await import(/* @vite-ignore */ modulePath).catch(() => null);
 
       if (wasmModule) {
         // Initialize with WASM module
