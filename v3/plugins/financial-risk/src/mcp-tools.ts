@@ -418,7 +418,7 @@ async function marketRegimeHandler(
       return errorResult(`Invalid input: ${validation.error.message}`);
     }
 
-    const { marketData, lookbackPeriod, regimeTypes } = validation.data;
+    const { marketData } = validation.data;
 
     // Initialize bridge
     const sparseBridge = context?.bridge?.sparse ?? new FinancialSparseBridge();
