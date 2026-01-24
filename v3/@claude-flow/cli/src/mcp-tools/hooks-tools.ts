@@ -222,8 +222,11 @@ async function getSemanticRouter() {
 
   // STEP 1: Try native VectorDb from @ruvector/router (HNSW-backed)
   try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    // Use createRequire for ESM compatibility with native modules
+    const { createRequire } = await import('module');
+    const require = createRequire(import.meta.url);
     const router = require('@ruvector/router');
+
     if (router.VectorDb && router.DistanceMetric) {
       const db = new router.VectorDb({
         dimensions: 384,
@@ -234,7 +237,7 @@ async function getSemanticRouter() {
       });
 
       // Initialize with task patterns
-      for (const [patternName, { keywords, agents }] of Object.entries(TASK_PATTERNS)) {
+      for (const [patternName, { keywords }] of Object.entries(TASK_PATTERNS)) {
         for (const keyword of keywords) {
           const embedding = generateSimpleEmbedding(keyword);
           db.insert(`${patternName}:${keyword}`, embedding);
