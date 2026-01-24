@@ -106,17 +106,63 @@ export interface CycleDetectionResult {
 }
 
 // ============================================================================
-// Module Cache
+// Module Cache - Lazy Loading with LazyWasm
 // ============================================================================
 
-/** Cached formula WASM module */
-let formulaWasmModule: FormulaWasmExports | null = null;
-/** Cached GNN WASM module */
-let gnnWasmModule: GnnWasmExports | null = null;
 /** WASM availability flag */
 let wasmAvailable: boolean | null = null;
 /** Performance timings log */
 const performanceLog: PerformanceTiming[] = [];
+
+/**
+ * Lazy loader for gastown-formula-wasm module.
+ * Only loads WASM when first accessed, not during startup.
+ * Supports idle timeout for memory cleanup.
+ */
+const lazyFormulaWasm = new LazyWasm<FormulaWasmExports>(
+  async () => {
+    if (!isWasmAvailable()) {
+      throw new Error('WASM not available');
+    }
+    const module = await import('gastown-formula-wasm') as unknown as FormulaWasmExports;
+    if (typeof module.default === 'function') {
+      await module.default();
+    }
+    return module;
+  },
+  {
+    name: 'gastown-formula-wasm',
+    idleTimeout: 5 * 60 * 1000, // 5 minutes idle timeout for memory cleanup
+    onError: (error) => {
+      console.debug('[WASM Loader] gastown-formula-wasm load error:', error);
+    },
+  }
+);
+
+/**
+ * Lazy loader for ruvector-gnn-wasm module.
+ * Only loads WASM when first accessed, not during startup.
+ * Supports idle timeout for memory cleanup.
+ */
+const lazyGnnWasm = new LazyWasm<GnnWasmExports>(
+  async () => {
+    if (!isWasmAvailable()) {
+      throw new Error('WASM not available');
+    }
+    const module = await import('ruvector-gnn-wasm') as unknown as GnnWasmExports;
+    if (typeof module.default === 'function') {
+      await module.default();
+    }
+    return module;
+  },
+  {
+    name: 'ruvector-gnn-wasm',
+    idleTimeout: 5 * 60 * 1000, // 5 minutes idle timeout for memory cleanup
+    onError: (error) => {
+      console.debug('[WASM Loader] ruvector-gnn-wasm load error:', error);
+    },
+  }
+);
 
 // ============================================================================
 // Performance Caches - LRU with O(1) operations
