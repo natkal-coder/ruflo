@@ -526,7 +526,7 @@ export class FinancialSparseBridge implements SparseBridge {
 
   private async resolveWasmPath(): Promise<string | null> {
     try {
-      const module = await import('ruvector-sparse-inference-wasm');
+      const module = await import(/* webpackIgnore: true */ 'ruvector-sparse-inference-wasm' as string) as { default?: string };
       return module.default ?? null;
     } catch {
       return null;
