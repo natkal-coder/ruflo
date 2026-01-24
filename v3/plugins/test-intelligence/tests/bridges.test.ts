@@ -399,13 +399,17 @@ describe('TestLearningBridge', () => {
       await bridge.init();
 
       // Train with substantial data
-      const largeHistory = Array(500).fill(null).map((_, i) => ({
+      const largeHistory = Array(50).fill(null).map((_, i) => ({
         testId: `test-${i}`,
-        name: `test_${i}`,
+        testName: `test_${i}`,
         file: `test${i}.test.ts`,
-        passed: Math.random() > 0.3,
-        duration: Math.floor(Math.random() * 1000),
-        changedFiles: Array(5).fill(null).map((_, j) => `src/file${j}.ts`),
+        failureRate: Math.random(),
+        avgDuration: Math.floor(Math.random() * 1000),
+        affectedFiles: Array(5).fill(null).map((_, j) => `src/file${j}.ts`),
+        results: [
+          { status: Math.random() > 0.3 ? 'passed' : 'failed', duration: 100 },
+          { status: Math.random() > 0.3 ? 'passed' : 'failed', duration: 110 },
+        ],
       }));
 
       await bridge.trainOnHistory(largeHistory);
