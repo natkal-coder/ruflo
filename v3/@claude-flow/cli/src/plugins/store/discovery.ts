@@ -1034,6 +1034,8 @@ export class PluginDiscoveryService {
       '@claude-flow/plugin-cognitive-kernel',
       '@claude-flow/plugin-quantum-optimizer',
       '@claude-flow/plugin-hyperbolic-reasoning',
+      // Gas Town Bridge
+      '@claude-flow/plugin-gastown-bridge',
     ];
 
     // Fetch stats in parallel
