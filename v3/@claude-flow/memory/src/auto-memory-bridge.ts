@@ -920,10 +920,18 @@ function pruneSectionsToFit(
 function buildIndexLines(
   sections: Record<string, string[]>,
   topicMapping: Record<string, string>,
+  sectionOrder?: string[],
 ): string[] {
   const lines: string[] = ['# Claude Flow V3 Project Memory', ''];
 
-  for (const [category, summaries] of Object.entries(sections)) {
+  // Use provided order, then append any remaining sections
+  const orderedCategories = sectionOrder
+    ? [...sectionOrder, ...Object.keys(sections).filter((k) => !sectionOrder.includes(k))]
+    : Object.keys(sections);
+
+  for (const category of orderedCategories) {
+    const summaries = sections[category];
+    if (!summaries || summaries.length === 0) continue;
     const label = CATEGORY_LABELS[category] || category;
     const filename = topicMapping[category] || `${category}.md`;
 
