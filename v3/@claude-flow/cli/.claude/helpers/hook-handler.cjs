@@ -55,6 +55,13 @@ const prompt = process.env.PROMPT || process.env.TOOL_INPUT_command || args.join
 
 const handlers = {
   'route': () => {
+    // Inject ranked intelligence context before routing
+    if (intelligence && intelligence.getContext) {
+      try {
+        const ctx = intelligence.getContext(prompt);
+        if (ctx) console.log(ctx);
+      } catch (e) { /* non-fatal */ }
+    }
     if (router && router.routeTask) {
       const result = router.routeTask(prompt);
       // Format output for Claude Code hook consumption
