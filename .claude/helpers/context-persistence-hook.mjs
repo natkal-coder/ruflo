@@ -1211,8 +1211,26 @@ async function retrieveContextSmart(backend, sessionId, budget) {
 
   if (lines.length === 0) return { text: '', accessedIds: [] };
 
+  // Cross-session semantic search: find related context from previous sessions
+  let crossSessionText = '';
+  if (backend.semanticSearch && sessionEntries.length > 0) {
+    try {
+      // Use the most recent turn's summary as the search query
+      const recentSummary = sessionEntries[0]?.metadata?.summary || '';
+      if (recentSummary) {
+        const crossResults = crossSessionSearch(backend, recentSummary, sessionId, 3);
+        if (crossResults.length > 0) {
+          const crossLines = crossResults.map(r =>
+            `- [Session ${r.sessionId?.slice(0, 8)}..., turn ${r.chunkIndex ?? '?'}, conf:${(r.confidence || 0).toFixed(2)}] ${r.summary || '(no summary)'}`
+          );
+          crossSessionText = `\n\nRelated context from previous sessions:\n${crossLines.join('\n')}`;
+        }
+      }
+    } catch { /* cross-session search is best-effort */ }
+  }
+
   const footer = `\n\nFull archive: ${NAMESPACE} namespace (session: ${sessionId}). ${sessionEntries.length - lines.length} additional turns available.`;
-  return { text: header + lines.join('\n') + footer, accessedIds };
+  return { text: header + lines.join('\n') + crossSessionText + footer, accessedIds };
 }
 
 // ============================================================================
