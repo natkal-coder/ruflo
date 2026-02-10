@@ -734,7 +734,16 @@ function parseTranscript(transcriptPath) {
   const messages = [];
   for (const line of lines) {
     try {
-      messages.push(JSON.parse(line));
+      const parsed = JSON.parse(line);
+      // SDK transcript wraps messages: { type: "user"|"A", message: { role, content } }
+      // Unwrap to get the inner API message with role/content
+      if (parsed.message && parsed.message.role) {
+        messages.push(parsed.message);
+      } else if (parsed.role) {
+        // Already in API message format (e.g. from tests)
+        messages.push(parsed);
+      }
+      // Skip non-message entries (progress, file-history-snapshot, queue-operation)
     } catch { /* skip malformed lines */ }
   }
   return messages;
